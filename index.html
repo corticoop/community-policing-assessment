@@ -8,6 +8,77 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
+    /* Password gate */
+    .pw-gate {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0f172a;
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .pw-gate.active { display: flex; }
+    .pw-box {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+    .pw-box .pw-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+    .pw-box h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+    .pw-box input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 7px;
+      padding: 0.65rem 0.9rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: white;
+      text-align: center;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .pw-box input:focus { border-color: #3b82f6; }
+    .pw-box input.error { border-color: #ef4444; animation: shake 0.3s; }
+    .pw-btn {
+      width: 100%;
+      background: #1e40af;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 0.65rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .pw-btn:hover { background: #1d4ed8; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -570,6 +641,16 @@
 </head>
 <body>
 
+<!-- Password gate -->
+<div class="pw-gate active" id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-label">CARE &middot; Stratford Police</div>
+    <h2>Community Policing Assessment</h2>
+    <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="pw-btn" onclick="checkPassword()">Continue</button>
+  </div>
+</div>
+
 <header class="site-header">
   <h1>Community Policing Practice Assessment</h1>
   <p>Stratford Police Department &middot; Prepared by CARE</p>
@@ -650,6 +731,40 @@
 </div>
 
 <script>
+// Password gate
+
+const PW_HASH = '1220739f0c9216fd6b804d2e2b83e9e6bbfad5c45b0cfcd5c39a01b20ef81b';
+
+function hashPassword(str) {
+  let hash = 0n;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * 31n + BigInt(str.charCodeAt(i))) & 0xffffffffffffffffn;
+  }
+  return hash.toString(16).padStart(16, '0');
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === atob('bG9mdG9u')) {
+    localStorage.setItem('cp_v1_auth', '1');
+    document.getElementById('pw-gate').classList.remove('active');
+  } else {
+    const inp = document.getElementById('pw-input');
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+}
+
+function checkAuth() {
+  if (localStorage.getItem('cp_v1_auth') !== '1') {
+    document.getElementById('pw-gate').classList.add('active');
+    setTimeout(() => document.getElementById('pw-input').focus(), 50);
+  } else {
+    document.getElementById('pw-gate').classList.remove('active');
+  }
+}
+
 // Data
 
 const SECTIONS = [
@@ -1130,6 +1245,7 @@ function doPrint() {
 
 // Init
 
+checkAuth();
 loadState();
 render();
 renderAddendum();
