@@ -658,13 +658,13 @@
 
 <div class="container">
 
-  <div class="intro-card">
+  <div class="intro-card" id="intro-text">
     CARE is looking to understand what current practices are or are not in place. We researched community policing practices from across the country and gathered this list. It is our understanding that many of these practices are already used by the Stratford Police Department, so this is simply an effort to understand what is currently in place.
   </div>
 
   <div class="definition-card">
     <div class="eyebrow">Definition</div>
-    <p>Community policing is a <strong>department-wide way of working</strong> in which officers use long-term partnerships with residents, businesses, and local organizations, plus structured problem-solving, to proactively reduce specific crime, disorder, and fear conditions in identified places. These practices are <strong>managed and resourced by the department</strong> and all officers are evaluated on that work.</p>
+    <p id="definition-text">Community policing is a <strong>department-wide way of working</strong> in which officers use long-term partnerships with residents, businesses, and local organizations, plus structured problem-solving, to proactively reduce specific crime, disorder, and fear conditions in identified places. These practices are <strong>managed and resourced by the department</strong> and all officers are evaluated on that work.</p>
     <div class="tags">
       <span class="tag">Partnerships</span>
       <span class="tag">Problem-solving (SARA)</span>
@@ -765,9 +765,27 @@ function checkAuth() {
   }
 }
 
+// Content (overwritten by content.json if available)
+
+let INTRO_TEXT = 'CARE is looking to understand what current practices are or are not in place. We researched community policing practices from across the country and gathered this list. It is our understanding that many of these practices are already used by the Stratford Police Department, so this is simply an effort to understand what is currently in place.';
+
+let DEFINITION_HTML = 'Community policing is a <strong>department-wide way of working</strong> in which officers use long-term partnerships with residents, businesses, and local organizations, plus structured problem-solving, to proactively reduce specific crime, disorder, and fear conditions in identified places. These practices are <strong>managed and resourced by the department</strong> and all officers are evaluated on that work.';
+
+async function loadContent() {
+  try {
+    const res = await fetch('/content.json?v=' + Date.now());
+    if (!res.ok) return;
+    const d = await res.json();
+    if (d.intro)      INTRO_TEXT      = d.intro;
+    if (d.definition) DEFINITION_HTML = d.definition;
+    if (d.sections)   SECTIONS        = d.sections;
+    if (d.references) REFERENCES      = d.references;
+  } catch (_) {}
+}
+
 // Data
 
-const SECTIONS = [
+let SECTIONS = [
   {
     id: 'patrol',
     label: 'Patrol',
@@ -893,7 +911,7 @@ const SECTIONS = [
   },
 ];
 
-const REFERENCES = [
+let REFERENCES = [
   {
     tag: 'U.S. Federal Framework',
     title: 'COPS Office "Community Policing Defined" model',
@@ -1245,19 +1263,24 @@ function doPrint() {
 
 // Init
 
-checkAuth();
-loadState();
-render();
-renderAddendum();
-updateProgress();
+(async () => {
+  checkAuth();
+  await loadContent();
+  document.getElementById('intro-text').textContent = INTRO_TEXT;
+  document.getElementById('definition-text').innerHTML = DEFINITION_HTML;
+  loadState();
+  render();
+  renderAddendum();
+  updateProgress();
 
-['f-name', 'f-date'].forEach(id =>
-  document.getElementById(id).addEventListener('input', persistOfficer)
-);
+  ['f-name', 'f-date'].forEach(id =>
+    document.getElementById(id).addEventListener('input', persistOfficer)
+  );
 
-document.getElementById('print-modal').addEventListener('click', function(e) {
-  if (e.target === this) closePrintModal();
-});
+  document.getElementById('print-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePrintModal();
+  });
+})();
 </script>
 </body>
 </html>

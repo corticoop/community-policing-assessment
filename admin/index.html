@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Community Policing Assessment</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; color: #0f172a; min-height: 100vh; }
+
+    /* Password gate */
+    #gate {
+      position: fixed; inset: 0; background: #0f172a;
+      display: flex; align-items: center; justify-content: center; z-index: 200;
+    }
+    #gate.hidden { display: none; }
+    .gate-box { background: #1e293b; padding: 40px; border-radius: 12px; width: 360px; }
+    .gate-box h1 { color: #f1f5f9; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .gate-box p { color: #94a3b8; font-size: 14px; margin-bottom: 28px; }
+    .gate-box input {
+      width: 100%; padding: 12px 16px; background: #0f172a; border: 1px solid #334155;
+      border-radius: 8px; color: #f1f5f9; font-size: 16px; margin-bottom: 12px; outline: none;
+    }
+    .gate-box input:focus { border-color: #3b82f6; }
+    .gate-box button {
+      width: 100%; padding: 12px; background: #3b82f6; color: white;
+      border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+    }
+    .gate-box button:hover { background: #2563eb; }
+    .gate-error { color: #f87171; font-size: 13px; margin-top: 10px; min-height: 18px; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-8px); }
+      40%,80% { transform: translateX(8px); }
+    }
+    .shake { animation: shake 0.4s; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: #0f172a; border-bottom: 1px solid #1e293b;
+      padding: 0 24px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    header h1 { color: #f1f5f9; font-size: 15px; font-weight: 600; }
+    .admin-badge {
+      background: #7c3aed; color: white; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px; letter-spacing: 0.08em;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    #draft-status { color: #64748b; font-size: 12px; }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 16px; border-radius: 6px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; text-decoration: none;
+      display: inline-flex; align-items: center;
+    }
+    .btn-primary { background: #3b82f6; color: white; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-primary:disabled { background: #64748b; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #334155; }
+    .btn-ghost:hover { background: #1e293b; color: #f1f5f9; }
+    .btn-outline { background: white; color: #374151; border: 1px solid #d1d5db; }
+    .btn-outline:hover { background: #f9fafb; }
+    .btn-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-dashed {
+      width: 100%; margin-top: 10px; padding: 10px;
+      border: 2px dashed #cbd5e1; border-radius: 8px;
+      background: transparent; color: #64748b; font-size: 13px;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .btn-dashed:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+
+    /* Layout */
+    main { max-width: 860px; margin: 0 auto; padding: 24px 24px 80px; }
+
+    /* Cards */
+    .card {
+      background: white; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;
+    }
+    .card-header {
+      padding: 14px 20px; border-bottom: 1px solid #f1f5f9;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header h2 { font-size: 14px; font-weight: 700; flex: 1; color: #374151; }
+    .card-body { padding: 20px; }
+
+    /* GitHub settings (collapsible) */
+    details.gh-card {
+      background: white; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 14px;
+    }
+    details.gh-card > summary {
+      padding: 14px 20px; cursor: pointer; font-size: 14px; font-weight: 700; color: #374151;
+      list-style: none; display: flex; align-items: center; gap: 8px; user-select: none;
+    }
+    details.gh-card > summary::-webkit-details-marker { display: none; }
+    details.gh-card > summary::before {
+      content: '▶'; font-size: 9px; color: #94a3b8; transition: transform 0.15s;
+    }
+    details.gh-card[open] > summary::before { transform: rotate(90deg); }
+    details.gh-card > summary .token-indicator {
+      margin-left: auto; font-size: 11px; font-weight: 500; color: #94a3b8;
+    }
+    details.gh-card > summary .token-indicator.ok { color: #16a34a; }
+    .gh-body { padding: 16px 20px 20px; border-top: 1px solid #f1f5f9; }
+
+    /* Form fields */
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px;
+    }
+    input[type="text"], input[type="password"], textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;
+      font-size: 14px; color: #0f172a; outline: none; font-family: inherit; background: white;
+    }
+    input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+      border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    textarea { resize: vertical; line-height: 1.55; }
+    .field-hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .field-row { display: flex; gap: 10px; }
+    .field-row .field { flex: 1; }
+    .token-row { display: flex; gap: 8px; align-items: flex-end; }
+    .token-row .field { flex: 1; }
+
+    /* Color input */
+    .color-row { display: flex; align-items: center; gap: 8px; }
+    input[type="color"] {
+      width: 36px; height: 34px; padding: 2px 3px; border: 1px solid #d1d5db;
+      border-radius: 6px; cursor: pointer; background: white; flex-shrink: 0;
+    }
+    .color-hex { font-size: 13px; color: #64748b; font-family: monospace; }
+
+    /* Section card specifics */
+    .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .section-meta { display: grid; grid-template-columns: 1fr 180px; gap: 12px; margin-bottom: 16px; }
+
+    /* Item cards */
+    .item-list { display: flex; flex-direction: column; gap: 10px; }
+    .item-card {
+      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; background: #f8fafc;
+    }
+    .item-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .item-num {
+      font-size: 10px; font-weight: 700; color: #94a3b8;
+      background: #e2e8f0; padding: 2px 7px; border-radius: 4px;
+    }
+    .item-id {
+      font-size: 11px; color: #94a3b8; font-family: monospace;
+    }
+
+    /* Ref cards */
+    .ref-card {
+      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;
+      background: #f8fafc; margin-bottom: 10px;
+    }
+    .ref-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+    /* Publish status */
+    #pub-msg {
+      padding: 12px 16px; border-radius: 8px; font-size: 14px;
+      margin-bottom: 14px; display: none;
+    }
+    #pub-msg.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; display: block; }
+    #pub-msg.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: block; }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 300;
+      background: #1e293b; color: white; padding: 11px 18px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      transform: translateY(80px); opacity: 0; transition: transform 0.22s, opacity 0.22s;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: #15803d; }
+    #toast.error { background: #dc2626; }
+  </style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div id="gate">
+  <div class="gate-box">
+    <h1>Admin Panel</h1>
+    <p>Community Policing Assessment — CARE</p>
+    <input type="password" id="gate-pw" placeholder="Password" autocomplete="current-password">
+    <button onclick="checkGate()">Enter</button>
+    <div class="gate-error" id="gate-err"></div>
+  </div>
+</div>
+
+<!-- App (hidden until authed) -->
+<div id="app" style="display:none;">
+
+  <header>
+    <div class="header-left">
+      <h1>Community Policing Assessment</h1>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <div class="header-right">
+      <span id="draft-status"></span>
+      <a href="/" class="btn btn-ghost btn-sm" style="text-decoration:none;">View Site</a>
+      <button class="btn btn-outline btn-sm" onclick="discardDraft()">Reload Content</button>
+      <button class="btn btn-primary" id="publish-btn" onclick="publish()">Publish Changes</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="pub-msg"></div>
+
+    <!-- GitHub Settings -->
+    <details class="gh-card" id="gh-details">
+      <summary>
+        GitHub Settings
+        <span class="token-indicator" id="token-indicator">No token set</span>
+      </summary>
+      <div class="gh-body">
+        <div class="token-row">
+          <div class="field">
+            <label>Personal Access Token</label>
+            <input type="password" id="gh-token" placeholder="ghp_..." autocomplete="off">
+          </div>
+          <button class="btn btn-outline" onclick="saveToken()">Save</button>
+        </div>
+        <p class="field-hint" style="margin-top:8px;">
+          Token is stored in your browser only — never sent to the server or saved in the repo.
+          Grant the <strong>repo</strong> scope on <code>corticoop/community-policing-assessment</code>.
+        </p>
+      </div>
+    </details>
+
+    <!-- Intro & Definition -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Introduction &amp; Definition</h2>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label>Intro Paragraph</label>
+          <textarea id="f-intro" rows="3" oninput="scheduleSave()"></textarea>
+        </div>
+        <div class="field">
+          <label>Definition</label>
+          <textarea id="f-definition" rows="4" oninput="scheduleSave()"></textarea>
+          <div class="field-hint">HTML is supported. Use &lt;strong&gt; for bold text.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Practice Sections -->
+    <div id="sections-container"></div>
+
+    <!-- References -->
+    <div class="card">
+      <div class="card-header">
+        <div class="section-dot" style="background:#475569;"></div>
+        <h2>References &amp; Addendum</h2>
+      </div>
+      <div class="card-body">
+        <div id="refs-list"></div>
+        <button class="btn-dashed" onclick="addRef()">+ Add a reference</button>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const REPO  = 'corticoop/community-policing-assessment';
+  const HOOK  = 'https://api.netlify.com/build_hooks/69fa45d874f8042c5d0a0c0c';
+  const PW    = atob('c3RyYXRmb3JkY2FyZQ=='); // stratfordcare
+
+  let data      = null;
+  let saveTimer = null;
+
+  // ── Auth ──────────────────────────────────────────────────────────
+
+  function checkGate() {
+    const val = document.getElementById('gate-pw').value;
+    if (val === PW) {
+      localStorage.setItem('admin_v1_auth', '1');
+      document.getElementById('gate').classList.add('hidden');
+      document.getElementById('app').style.display = '';
+      init();
+    } else {
+      document.getElementById('gate-err').textContent = 'Incorrect password.';
+      const box = document.querySelector('.gate-box');
+      box.classList.remove('shake');
+      void box.offsetWidth;
+      box.classList.add('shake');
+      document.getElementById('gate-pw').value = '';
+    }
+  }
+
+  document.getElementById('gate-pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkGate();
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────
+
+  async function init() {
+    const token = localStorage.getItem('admin_v1_token') || '';
+    document.getElementById('gh-token').value = token;
+    updateTokenIndicator(token);
+
+    const draft = localStorage.getItem('admin_v1_draft');
+    if (draft) {
+      try {
+        data = JSON.parse(draft);
+        setStatus('Unsaved draft restored — ' + new Date().toLocaleTimeString());
+        render();
+        return;
+      } catch (_) {}
+    }
+    await fetchContent();
+  }
+
+  async function fetchContent() {
+    setStatus('Loading content...');
+    try {
+      const res = await fetch('/content.json?v=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      data = await res.json();
+      setStatus('Loaded from live site');
+      render();
+    } catch (e) {
+      setStatus('Failed to load content.json');
+      showToast('Could not load content.json: ' + e.message, 'error');
+    }
+  }
+
+  // ── Render ────────────────────────────────────────────────────────
+
+  function render() {
+    document.getElementById('f-intro').value      = data.intro      || '';
+    document.getElementById('f-definition').value = data.definition || '';
+    renderSections();
+    renderRefs();
+  }
+
+  function renderSections() {
+    const container = document.getElementById('sections-container');
+    container.innerHTML = '';
+    (data.sections || []).forEach((sec, si) => {
+      container.appendChild(buildSectionCard(sec, si));
+    });
+  }
+
+  function buildSectionCard(sec, si) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.si = si;
+
+    // Header
+    const hdr = document.createElement('div');
+    hdr.className = 'card-header';
+    const dot = document.createElement('div');
+    dot.className = 'section-dot';
+    dot.style.background = sec.color;
+    dot.id = 'dot-' + si;
+    const title = document.createElement('h2');
+    title.textContent = sec.label;
+    title.id = 'sec-title-' + si;
+    hdr.appendChild(dot);
+    hdr.appendChild(title);
+    card.appendChild(hdr);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    // Section meta: label + color
+    const metaRow = document.createElement('div');
+    metaRow.className = 'section-meta';
+
+    const labelField = document.createElement('div');
+    labelField.className = 'field';
+    labelField.style.marginBottom = '0';
+    labelField.innerHTML = '<label>Section Label</label>';
+    const labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.value = sec.label;
+    labelInput.dataset.si = si;
+    labelInput.dataset.field = 'label';
+    labelInput.oninput = function() { updateSection(this); };
+    labelField.appendChild(labelInput);
+    metaRow.appendChild(labelField);
+
+    const colorField = document.createElement('div');
+    colorField.className = 'field';
+    colorField.style.marginBottom = '0';
+    colorField.innerHTML = '<label>Color</label>';
+    const colorRow = document.createElement('div');
+    colorRow.className = 'color-row';
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.value = sec.color;
+    colorInput.dataset.si = si;
+    colorInput.dataset.field = 'color';
+    colorInput.oninput = function() { updateSection(this); };
+    const hexSpan = document.createElement('span');
+    hexSpan.className = 'color-hex';
+    hexSpan.textContent = sec.color;
+    hexSpan.id = 'hex-' + si;
+    colorRow.appendChild(colorInput);
+    colorRow.appendChild(hexSpan);
+    colorField.appendChild(colorRow);
+    metaRow.appendChild(colorField);
+
+    body.appendChild(metaRow);
+
+    // Item list
+    const divider = document.createElement('hr');
+    divider.style.cssText = 'border:none;border-top:1px solid #f1f5f9;margin:16px 0;';
+    body.appendChild(divider);
+
+    const itemList = document.createElement('div');
+    itemList.className = 'item-list';
+    itemList.id = 'items-' + si;
+    (sec.items || []).forEach((item, ii) => {
+      itemList.appendChild(buildItemCard(item, si, ii));
+    });
+    body.appendChild(itemList);
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-dashed';
+    addBtn.textContent = '+ Add a practice';
+    addBtn.onclick = () => addItem(si);
+    body.appendChild(addBtn);
+
+    card.appendChild(body);
+    return card;
+  }
+
+  function buildItemCard(item, si, ii) {
+    const div = document.createElement('div');
+    div.className = 'item-card';
+
+    const top = document.createElement('div');
+    top.className = 'item-card-top';
+    top.innerHTML = `<span class="item-num">${ii + 1}</span><span class="item-id">id: ${escHtml(item.id)}</span>`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-danger btn-sm';
+    delBtn.style.marginLeft = 'auto';
+    delBtn.textContent = 'Remove';
+    delBtn.onclick = () => deleteItem(si, ii);
+    top.appendChild(delBtn);
+    div.appendChild(top);
+
+    const titleField = document.createElement('div');
+    titleField.className = 'field';
+    titleField.innerHTML = '<label>Title</label>';
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.value = item.title;
+    titleInput.dataset.si = si;
+    titleInput.dataset.ii = ii;
+    titleInput.dataset.field = 'title';
+    titleInput.oninput = function() { updateItem(this); };
+    titleField.appendChild(titleInput);
+    div.appendChild(titleField);
+
+    const descField = document.createElement('div');
+    descField.className = 'field';
+    descField.style.marginBottom = '0';
+    descField.innerHTML = '<label>Description</label>';
+    const descTA = document.createElement('textarea');
+    descTA.rows = 3;
+    descTA.value = item.desc;
+    descTA.dataset.si = si;
+    descTA.dataset.ii = ii;
+    descTA.dataset.field = 'desc';
+    descTA.oninput = function() { updateItem(this); };
+    descField.appendChild(descTA);
+    div.appendChild(descField);
+
+    return div;
+  }
+
+  function renderRefs() {
+    const list = document.getElementById('refs-list');
+    list.innerHTML = '';
+    (data.references || []).forEach((ref, ri) => {
+      list.appendChild(buildRefCard(ref, ri));
+    });
+  }
+
+  function buildRefCard(ref, ri) {
+    const div = document.createElement('div');
+    div.className = 'ref-card';
+
+    const top = document.createElement('div');
+    top.className = 'ref-card-top';
+    top.innerHTML = `<span class="item-num">${ri + 1}</span>`;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-danger btn-sm';
+    delBtn.style.marginLeft = 'auto';
+    delBtn.textContent = 'Remove';
+    delBtn.onclick = () => deleteRef(ri);
+    top.appendChild(delBtn);
+    div.appendChild(top);
+
+    const tagField = document.createElement('div');
+    tagField.className = 'field';
+    tagField.innerHTML = '<label>Tag / Category</label>';
+    const tagInput = document.createElement('input');
+    tagInput.type = 'text';
+    tagInput.value = ref.tag;
+    tagInput.dataset.ri = ri;
+    tagInput.dataset.field = 'tag';
+    tagInput.oninput = function() { updateRef(this); };
+    tagField.appendChild(tagInput);
+    div.appendChild(tagField);
+
+    const titleField = document.createElement('div');
+    titleField.className = 'field';
+    titleField.innerHTML = '<label>Title</label>';
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.value = ref.title;
+    titleInput.dataset.ri = ri;
+    titleInput.dataset.field = 'title';
+    titleInput.oninput = function() { updateRef(this); };
+    titleField.appendChild(titleInput);
+    div.appendChild(titleField);
+
+    const descField = document.createElement('div');
+    descField.className = 'field';
+    descField.style.marginBottom = '0';
+    descField.innerHTML = '<label>Description</label>';
+    const descTA = document.createElement('textarea');
+    descTA.rows = 3;
+    descTA.value = ref.desc;
+    descTA.dataset.ri = ri;
+    descTA.dataset.field = 'desc';
+    descTA.oninput = function() { updateRef(this); };
+    descField.appendChild(descTA);
+    div.appendChild(descField);
+
+    return div;
+  }
+
+  // ── Data mutations ────────────────────────────────────────────────
+
+  function collectGlobals() {
+    data.intro      = document.getElementById('f-intro').value;
+    data.definition = document.getElementById('f-definition').value;
+  }
+
+  function updateSection(el) {
+    const si    = +el.dataset.si;
+    const field = el.dataset.field;
+    data.sections[si][field] = el.value;
+    if (field === 'label') {
+      const t = document.getElementById('sec-title-' + si);
+      if (t) t.textContent = el.value;
+    }
+    if (field === 'color') {
+      const dot = document.getElementById('dot-' + si);
+      const hex = document.getElementById('hex-' + si);
+      if (dot) dot.style.background = el.value;
+      if (hex) hex.textContent = el.value;
+    }
+    scheduleSave();
+  }
+
+  function updateItem(el) {
+    const si    = +el.dataset.si;
+    const ii    = +el.dataset.ii;
+    const field = el.dataset.field;
+    data.sections[si].items[ii][field] = el.value;
+    scheduleSave();
+  }
+
+  function addItem(si) {
+    const sec    = data.sections[si];
+    const prefix = sec.id.charAt(0);
+    const maxNum = (sec.items || []).reduce((mx, item) => {
+      const m = item.id.match(/\d+$/);
+      return m ? Math.max(mx, +m[0]) : mx;
+    }, 0);
+    const newItem = { id: `${prefix}${maxNum + 1}`, title: '', desc: '' };
+    sec.items.push(newItem);
+    const list = document.getElementById('items-' + si);
+    const card = buildItemCard(newItem, si, sec.items.length - 1);
+    list.appendChild(card);
+    card.querySelector('input[data-field="title"]').focus();
+    scheduleSave();
+  }
+
+  function deleteItem(si, ii) {
+    if (!confirm('Remove this practice item?')) return;
+    data.sections[si].items.splice(ii, 1);
+    const container = document.getElementById('sections-container');
+    const oldCard = container.querySelector(`.card[data-si="${si}"]`);
+    const newCard = buildSectionCard(data.sections[si], si);
+    container.replaceChild(newCard, oldCard);
+    scheduleSave();
+  }
+
+  function updateRef(el) {
+    const ri    = +el.dataset.ri;
+    const field = el.dataset.field;
+    data.references[ri][field] = el.value;
+    scheduleSave();
+  }
+
+  function addRef() {
+    data.references.push({ tag: '', title: '', desc: '' });
+    renderRefs();
+    const inputs = document.querySelectorAll('#refs-list input[data-field="tag"]');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+    scheduleSave();
+  }
+
+  function deleteRef(ri) {
+    if (!confirm('Remove this reference?')) return;
+    data.references.splice(ri, 1);
+    renderRefs();
+    scheduleSave();
+  }
+
+  // ── Draft autosave ────────────────────────────────────────────────
+
+  function scheduleSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      collectGlobals();
+      localStorage.setItem('admin_v1_draft', JSON.stringify(data));
+      setStatus('Draft saved ' + new Date().toLocaleTimeString());
+    }, 600);
+  }
+
+  function discardDraft() {
+    if (!confirm('Discard unsaved changes and reload from the live site?')) return;
+    localStorage.removeItem('admin_v1_draft');
+    fetchContent();
+  }
+
+  // ── GitHub token ──────────────────────────────────────────────────
+
+  function saveToken() {
+    const token = document.getElementById('gh-token').value.trim();
+    localStorage.setItem('admin_v1_token', token);
+    updateTokenIndicator(token);
+    showToast('Token saved', 'success');
+  }
+
+  function updateTokenIndicator(token) {
+    const el = document.getElementById('token-indicator');
+    if (!token) {
+      el.className = 'token-indicator';
+      el.textContent = 'No token set';
+    } else {
+      el.className = 'token-indicator ok';
+      el.textContent = token.slice(0, 4) + '••••';
+    }
+  }
+
+  // ── Publish ───────────────────────────────────────────────────────
+
+  async function publish() {
+    collectGlobals();
+
+    const token = localStorage.getItem('admin_v1_token') || '';
+    if (!token) {
+      showToast('Open "GitHub Settings" above and save your token first', 'error');
+      document.getElementById('gh-details').open = true;
+      return;
+    }
+
+    const btn = document.getElementById('publish-btn');
+    btn.disabled = true;
+    btn.textContent = 'Publishing...';
+    clearPubMsg();
+
+    try {
+      // 1. Get current SHA
+      const shaRes = await fetch(
+        `https://api.github.com/repos/${REPO}/contents/content.json`,
+        { headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' } }
+      );
+      if (!shaRes.ok) {
+        const err = await shaRes.json().catch(() => ({}));
+        throw new Error(`GitHub API: ${err.message || shaRes.status}`);
+      }
+      const { sha } = await shaRes.json();
+
+      // 2. Encode new content (UTF-8 safe base64)
+      const jsonStr = JSON.stringify(data, null, 2);
+      const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+
+      // 3. Write content.json
+      const putRes = await fetch(
+        `https://api.github.com/repos/${REPO}/contents/content.json`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: 'Update content via admin panel',
+            content: encoded,
+            sha
+          })
+        }
+      );
+      if (!putRes.ok) {
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(`GitHub write: ${err.message || putRes.status}`);
+      }
+
+      // 4. Trigger Netlify deploy
+      await fetch(HOOK, { method: 'POST' });
+
+      // 5. Clear draft
+      localStorage.removeItem('admin_v1_draft');
+      setStatus('Published ' + new Date().toLocaleTimeString());
+      showPubMsg('Changes published. The site will rebuild in about 30 seconds.', 'success');
+      showToast('Published', 'success');
+
+    } catch (e) {
+      showPubMsg('Publish failed: ' + e.message, 'error');
+      showToast('Publish failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Publish Changes';
+    }
+  }
+
+  function showPubMsg(msg, type) {
+    const el = document.getElementById('pub-msg');
+    el.textContent = msg;
+    el.className = type;
+  }
+
+  function clearPubMsg() {
+    const el = document.getElementById('pub-msg');
+    el.className = '';
+    el.textContent = '';
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────
+
+  let toastTimer = null;
+  function showToast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'show' + (type ? ' ' + type : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = ''; }, 3200);
+  }
+
+  // ── Utility ───────────────────────────────────────────────────────
+
+  function setStatus(msg) {
+    document.getElementById('draft-status').textContent = msg;
+  }
+
+  function escHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────
+
+  if (localStorage.getItem('admin_v1_auth') === '1') {
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('app').style.display = '';
+    init();
+  } else {
+    document.getElementById('gate-pw').focus();
+  }
+</script>
+</body>
+</html>
