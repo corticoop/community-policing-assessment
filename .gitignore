@@ -1,0 +1,6 @@
+# Research source doc (not part of the web app)
+*.docx
+~$*
+
+# macOS
+.DS_Store
