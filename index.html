@@ -15,7 +15,7 @@
       --card: #ffffff;
       --border: #e2e8f0;
       --text: #0f172a;
-      --muted: #64748b;
+      --muted: #475569;
       --accent: #1e40af;
       --yes: #16a34a;
       --yes-light: #f0fdf4;
@@ -35,14 +35,14 @@
       font-size: 15px;
     }
 
-    /* ── Header ── */
+    /* Header */
     .site-header {
       background: #0f172a;
       color: white;
       padding: 2rem 1.5rem 1.75rem;
     }
     .site-header h1 {
-      font-size: 1.35rem;
+      font-size: 1.5rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       margin-bottom: 0.3rem;
@@ -54,14 +54,27 @@
       line-height: 1.5;
     }
 
-    /* ── Layout ── */
+    /* Layout */
     .container {
       max-width: 760px;
       margin: 0 auto;
       padding: 2rem 1.5rem 4rem;
     }
 
-    /* ── Definition ── */
+    /* Intro card */
+    .intro-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      font-size: 0.875rem;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* Definition */
     .definition-card {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
@@ -99,7 +112,7 @@
       font-weight: 600;
     }
 
-    /* ── Officer info ── */
+    /* Officer info */
     .officer-card {
       background: white;
       border: 1px solid var(--border);
@@ -138,7 +151,7 @@
       background: white;
     }
 
-    /* ── Actions bar ── */
+    /* Actions bar */
     .actions {
       display: flex;
       gap: 0.6rem;
@@ -184,7 +197,7 @@
     }
     .save-pill.show { opacity: 1; }
 
-    /* ── Progress ── */
+    /* Progress */
     .progress-wrap {
       background: white;
       border: 1px solid var(--border);
@@ -214,7 +227,7 @@
       transition: width 0.35s cubic-bezier(.4,0,.2,1);
     }
 
-    /* ── Section headers ── */
+    /* Section headers */
     .section { margin-bottom: 2rem; }
     .section-header {
       display: flex;
@@ -231,7 +244,7 @@
       flex-shrink: 0;
     }
     .section-header h2 {
-      font-size: 0.9rem;
+      font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
@@ -242,7 +255,7 @@
       margin-left: auto;
     }
 
-    /* ── Item cards ── */
+    /* Item cards */
     .item-card {
       background: white;
       border: 1px solid var(--border);
@@ -262,7 +275,7 @@
       border-color: var(--no-border);
     }
     .item-title {
-      font-size: 0.875rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 0.3rem;
@@ -316,9 +329,14 @@
       color: white;
       border-color: var(--no);
     }
-    .item-notes {
+
+    /* Notes wrapper with save indicator */
+    .notes-wrap {
       flex: 1;
       min-width: 200px;
+    }
+    .item-notes {
+      width: 100%;
       font-family: inherit;
       font-size: 0.8rem;
       color: var(--text);
@@ -331,6 +349,7 @@
       overflow: hidden;
       transition: border-color 0.15s, background 0.15s;
       line-height: 1.5;
+      display: block;
     }
     .item-notes:focus {
       outline: none;
@@ -338,8 +357,80 @@
       background: white;
     }
     .item-notes::placeholder { color: #94a3b8; }
+    .note-saved {
+      display: block;
+      text-align: right;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--yes);
+      height: 1.1rem;
+      padding-top: 0.15rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .note-saved.show { opacity: 1; }
 
-    /* ── Addendum ── */
+    /* Custom practice items */
+    .custom-item-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .custom-title-input {
+      flex: 1;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      border: none;
+      border-bottom: 2px solid var(--border);
+      border-radius: 0;
+      background: transparent;
+      padding: 0.2rem 0;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .custom-title-input:focus { border-bottom-color: var(--accent); }
+    .custom-title-input::placeholder { color: #94a3b8; font-weight: 400; }
+    .custom-delete-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .custom-delete-btn:hover { color: var(--no); background: var(--no-light); }
+    .add-practice-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      background: none;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.15s;
+      margin-top: 0.25rem;
+    }
+    .add-practice-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #eff6ff;
+    }
+
+    /* Addendum */
     .addendum {
       background: white;
       border: 1px solid var(--border);
@@ -363,7 +454,7 @@
     }
     .addendum-toggle:hover { background: #f8fafc; }
     .addendum-toggle h2 {
-      font-size: 0.875rem;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -404,7 +495,7 @@
       line-height: 1.65;
     }
 
-    /* ── Footer ── */
+    /* Footer */
     .site-footer {
       text-align: center;
       color: var(--muted);
@@ -412,11 +503,49 @@
       padding-top: 1rem;
     }
 
-    /* ── Print ── */
+    /* Print modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .modal-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .modal-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+    }
+    .modal-card p strong { color: var(--text); }
+    .modal-footer {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    /* Print */
     @media print {
       body { background: white; font-size: 12px; }
       .site-header { background: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .actions { display: none !important; }
+      .actions, .modal-overlay, .add-practice-btn, .custom-delete-btn, .note-saved { display: none !important; }
       .addendum-body { display: block !important; }
       .item-card { break-inside: avoid; box-shadow: none; }
       .btn-yes.active {
@@ -428,13 +557,14 @@
         -webkit-print-color-adjust: exact; print-color-adjust: exact;
       }
       .item-notes { border: 1px solid #ccc !important; background: white !important; }
+      .custom-title-input { border-bottom: 1px solid #ccc !important; }
     }
 
     @media (max-width: 580px) {
-      .site-header h1 { font-size: 1.1rem; }
+      .site-header h1 { font-size: 1.2rem; }
       .container { padding: 1.25rem 1rem 3rem; }
       .item-footer { flex-direction: column; }
-      .item-notes { min-width: 100%; }
+      .notes-wrap { min-width: 100%; }
     }
   </style>
 </head>
@@ -442,14 +572,18 @@
 
 <header class="site-header">
   <h1>Community Policing Practice Assessment</h1>
-  <p>Review each practice. Mark whether your department currently does it, and add any notes. Responses are saved automatically in your browser.</p>
+  <p>Stratford Police Department &middot; Prepared by CARE</p>
 </header>
 
 <div class="container">
 
+  <div class="intro-card">
+    CARE is looking to understand what current practices are or are not in place. We researched community policing practices from across the country and gathered this list. It is our understanding that many of these practices are already used by the Stratford Police Department, so this is simply an effort to understand what is currently in place.
+  </div>
+
   <div class="definition-card">
     <div class="eyebrow">Definition</div>
-    <p>Community policing is a <strong>department-wide operating philosophy</strong> in which officers use long-term partnerships with residents, businesses, and local organizations — plus structured problem-solving — to proactively reduce specific crime, disorder, and fear in identified places. Officers are managed, resourced, and <strong>evaluated on this work</strong>, not just on traditional metrics like arrests and response times. It is a philosophy and organizational strategy, not a unit or a program.</p>
+    <p>Community policing is a <strong>department-wide way of working</strong> in which officers use long-term partnerships with residents, businesses, and local organizations, plus structured problem-solving, to proactively reduce specific crime, disorder, and fear conditions in identified places. These practices are <strong>managed and resourced by the department</strong> and all officers are evaluated on that work.</p>
     <div class="tags">
       <span class="tag">Partnerships</span>
       <span class="tag">Problem-solving (SARA)</span>
@@ -465,18 +599,13 @@
       <input id="f-name" type="text" placeholder="Name / rank">
     </div>
     <div class="field-group">
-      <label for="f-dept">Department</label>
-      <input id="f-dept" type="text" placeholder="Department name">
-    </div>
-    <div class="field-group">
-      <label for="f-date">Date</label>
+      <label for="f-date">Date filled out</label>
       <input id="f-date" type="text" placeholder="e.g. May 5, 2026">
     </div>
   </div>
 
   <div class="actions">
-    <button class="btn btn-primary" id="btn-copy" onclick="copySummary()">Copy summary</button>
-    <button class="btn btn-outline" onclick="window.print()">Print</button>
+    <button class="btn btn-primary" onclick="openSaveDialog()">Save Answers</button>
     <button class="btn btn-ghost" onclick="resetAll()">Reset all</button>
     <span class="save-pill" id="save-pill">✓ Saved</span>
   </div>
@@ -484,7 +613,7 @@
   <div class="progress-wrap">
     <div class="progress-row">
       <span class="progress-label">Progress</span>
-      <span class="progress-count"><span id="p-count">0</span> of <span id="p-total"></span> practices answered</span>
+      <span class="progress-count"><span id="p-count">0</span> of <span id="p-total">0</span> practices answered</span>
     </div>
     <div class="progress-track">
       <div class="progress-fill" id="p-fill" style="width:0%"></div>
@@ -495,21 +624,33 @@
 
   <div class="addendum">
     <button class="addendum-toggle" id="add-toggle" onclick="toggleAddendum()">
-      <h2>Addendum — Research, Programs &amp; Examples</h2>
-      <span class="chevron">▼</span>
+      <h2>Addendum: Research, Programs and Examples</h2>
+      <span class="chevron">&#9660;</span>
     </button>
     <div class="addendum-body" id="add-body"></div>
   </div>
 
   <footer class="site-footer">
     Responses are stored locally in your browser and persist between sessions.<br>
-    Use "Copy summary" to share your results via email.
+    Use "Save Answers" to download a PDF copy of your responses.
   </footer>
 
 </div>
 
+<!-- Print / Save modal -->
+<div id="print-modal" class="modal-overlay">
+  <div class="modal-card">
+    <h3>Save your answers as PDF</h3>
+    <p>In the print dialog, set the destination to <strong>Save as PDF</strong> to download a copy of your responses.</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closePrintModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="doPrint()">Open print dialog</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── Data ────────────────────────────────────────────────────────────────────
+// Data
 
 const SECTIONS = [
   {
@@ -520,7 +661,7 @@ const SECTIONS = [
       {
         id: 'p1',
         title: 'Beat ownership with problem briefs',
-        desc: 'Each officer has a defined, small beat and maintains a living "problem list" of three priority recurring problems. Once per month, the officer documents SARA steps (Scanning, Analysis, Response, Assessment) for one specific problem — such as chronic disturbances at a location, a nuisance property, or an unsafe crosswalk.',
+        desc: 'Each officer has a defined, small beat and maintains a living "problem list" of three priority recurring problems. Once per month, the officer documents SARA steps (Scanning, Analysis, Response, Assessment) for one specific problem, such as chronic disturbances at a location, a nuisance property, or an unsafe crosswalk.',
       },
       {
         id: 'p2',
@@ -530,7 +671,7 @@ const SECTIONS = [
       {
         id: 'p3',
         title: 'Foot or bike time carved out of each shift',
-        desc: 'Every day tour includes a 30–60 minute foot or bike patrol block in a designated micro-hotspot or community location — not as a special detail, but as a scheduled part of the shift. Officers visit the same places routinely (school dismissal, senior housing entrance) to build familiarity and feedback loops.',
+        desc: 'Every day tour includes a 30 to 60 minute foot or bike patrol block in a designated micro-hotspot or community location, not as a special detail, but as a scheduled part of the shift. Officers visit the same places routinely (school dismissal, senior housing entrance) to build familiarity and feedback loops.',
       },
       {
         id: 'p4',
@@ -540,12 +681,12 @@ const SECTIONS = [
       {
         id: 'p5',
         title: 'Problem-solving as a standard call outcome',
-        desc: 'For recurring calls at the same address, officers must add a brief problem-solving note and at least one non-traditional option — mediation referral, landlord contact, mental health liaison — before clearing the incident in the RMS.',
+        desc: 'For recurring calls at the same address, officers must add a brief problem-solving note and at least one non-traditional option, such as a mediation referral, landlord contact, or mental health liaison, before clearing the incident in the RMS.',
       },
       {
         id: 'p6',
         title: 'Community meetings during normal duty hours',
-        desc: 'Patrol officers rotate attending existing community meetings (neighborhood associations, PTA, tenant groups) during their shift as one of their assigned tasks — not as extra or overtime duty.',
+        desc: 'Patrol officers rotate attending existing community meetings (neighborhood associations, PTA, tenant groups) during their shift as one of their assigned tasks, not as extra or overtime duty.',
       },
     ],
   },
@@ -557,7 +698,7 @@ const SECTIONS = [
       {
         id: 'd1',
         title: 'Victim and complainant feedback as a formal case step',
-        desc: 'For qualifying cases (robberies, burglaries, shootings), detectives schedule at least one non-investigative follow-up conversation about safety concerns and needed environmental changes — lighting, cameras, access control. That feedback feeds into a short "problem memo" shared with patrol or the problem-solving team.',
+        desc: 'For qualifying cases (robberies, burglaries, shootings), detectives schedule at least one non-investigative follow-up conversation about safety concerns and needed environmental changes, such as lighting, cameras, and access control. That feedback feeds into a short "problem memo" shared with patrol or the problem-solving team.',
       },
       {
         id: 'd2',
@@ -572,7 +713,7 @@ const SECTIONS = [
       {
         id: 'd4',
         title: 'Detectives as named liaisons to key institutions',
-        desc: 'Specific detectives are assigned as regular contact points for school systems, hospitals, major housing providers, and youth agencies. Their work includes quarterly information-sharing meetings and joint problem-solving with these partners — not just subpoena or service-of-process interactions.',
+        desc: 'Specific detectives are assigned as regular contact points for school systems, hospitals, major housing providers, and youth agencies. Their work includes quarterly information-sharing meetings and joint problem-solving with these partners, not just subpoena or service-of-process interactions.',
       },
     ],
   },
@@ -589,7 +730,7 @@ const SECTIONS = [
       {
         id: 's2',
         title: 'Gang and violence units co-designing interventions',
-        desc: 'When targeting hotspots or specific groups, these units spend part of their week in formal call-ins or small meetings with community leaders, outreach workers, and at-risk individuals — pairing enforcement messages with connections to services.',
+        desc: 'When targeting hotspots or specific groups, these units spend part of their week in formal call-ins or small meetings with community leaders, outreach workers, and at-risk individuals, pairing enforcement messages with connections to services.',
       },
       {
         id: 's3',
@@ -599,7 +740,7 @@ const SECTIONS = [
       {
         id: 's4',
         title: 'Visible positive presence between operations',
-        desc: 'Between high-risk operations, tactical and specialized crime units schedule non-enforcement presence at youth sports, community events, or "Coffee with a Cop"-style gatherings in their assigned areas. Attendance is built into their duty schedule a few times per month — not treated as a voluntary add-on.',
+        desc: 'Between high-risk operations, tactical and specialized crime units schedule non-enforcement presence at youth sports, community events, or "Coffee with a Cop"-style gatherings in their assigned areas. Attendance is built into their duty schedule a few times per month, not treated as a voluntary add-on.',
       },
       {
         id: 's5',
@@ -610,28 +751,28 @@ const SECTIONS = [
   },
   {
     id: 'evaluation',
-    label: 'Evaluation & Supervision',
+    label: 'Evaluation and Supervision',
     color: '#b45309',
     items: [
       {
         id: 'e1',
         title: 'Performance evaluations tied to community outcomes',
-        desc: 'Annual evaluations include explicit, scored categories: "Problem solving," "Community partnerships," and "Responsiveness to residents" — with concrete examples required from each officer\'s SARA projects and community contact logs.',
+        desc: 'Annual evaluations include explicit, scored categories: "Problem solving," "Community partnerships," and "Responsiveness to residents," with concrete examples required from each officer\'s SARA projects and community contact logs.',
       },
       {
         id: 'e2',
         title: 'Promotion criteria that reflect community policing',
-        desc: 'Leadership of at least one documented, successful problem-solving initiative — plus positive feedback from community partners — is a formal prerequisite for promotion to sergeant and above.',
+        desc: 'Leadership of at least one documented, successful problem-solving initiative, plus positive feedback from community partners, is a formal prerequisite for promotion to sergeant and above.',
       },
       {
         id: 'e3',
         title: 'Problem-focused command reviews, not just crime counts',
-        desc: 'Regular command meetings (CompStat-style) focus on which recurring problems were identified, what partnerships were activated, and what changed in conditions — not only on arrest numbers and clearance rates.',
+        desc: 'Regular command meetings (CompStat-style) focus on which recurring problems were identified, what partnerships were activated, and what changed in conditions, not only on arrest numbers and clearance rates.',
       },
       {
         id: 'e4',
         title: 'FTO program includes community policing competencies',
-        desc: 'Field training officers are required to demonstrate and actively coach community contact skills, problem-solving methods, and relationship mapping. These are evaluated as core competencies alongside tactics and report writing — not treated as soft extras.',
+        desc: 'Field training officers are required to demonstrate and actively coach community contact skills, problem-solving methods, and relationship mapping. These are evaluated as core competencies alongside tactics and report writing, not treated as soft extras.',
       },
     ],
   },
@@ -646,17 +787,17 @@ const REFERENCES = [
   {
     tag: 'U.S. City Initiatives',
     title: '21st Century Policing Task Force cities',
-    desc: 'Cities including Birmingham, Stockton, and Gary increased officer participation in community forums, neighborhood clean-ups, youth sports, and anti-crime strategies with civic partners — during duty hours, not as overtime. Source: obamawhitehouse.archives.gov',
+    desc: 'Cities including Birmingham, Stockton, and Gary increased officer participation in community forums, neighborhood clean-ups, youth sports, and anti-crime strategies with civic partners, during duty hours, not as overtime. Source: obamawhitehouse.archives.gov',
   },
   {
-    tag: 'Program — National',
+    tag: 'Program - National',
     title: '"Coffee with a Cop" (originated Hawthorne, CA)',
     desc: 'Informal coffee events at everyday venues so officers and residents can talk without the pressure of calls for service. Easy to embed in regular patrol schedules and to rotate detectives and specialized units through on a set schedule. Now active in departments across the U.S. Source: surfcitync.gov',
   },
   {
     tag: 'Structural Practice',
     title: 'Neighborhood-based beats and foot/bike patrols',
-    desc: 'Widely adopted across U.S. agencies: officers assigned to small geographic areas for extended periods, with face-to-face interactions prioritized. The structural lever is redesigning patrol deployment so "owning a beat" and knowing stakeholders is formally evaluated — not optional. Source: OJP, Wikipedia/policing literature',
+    desc: 'Widely adopted across U.S. agencies: officers assigned to small geographic areas for extended periods, with face-to-face interactions prioritized. The structural lever is redesigning patrol deployment so "owning a beat" and knowing stakeholders is formally evaluated, not optional. Source: OJP, policing literature',
   },
   {
     tag: 'Program',
@@ -676,51 +817,80 @@ const REFERENCES = [
   {
     tag: 'Research Finding',
     title: 'UCLA study: what makes community policing fail',
-    desc: 'Rigorous evaluations across six countries found that add-on meetings and short pilots — without real changes to how officers are supervised and evaluated — rarely move outcomes. The core lesson: community policing must be embedded as a standard operating philosophy (beats, partnerships, problem-solving, accountability), not a time-limited project. Source: UCLA Luskin / newsroom.ucla.edu',
+    desc: 'Rigorous evaluations across six countries found that add-on meetings and short pilots, without real changes to how officers are supervised and evaluated, rarely move outcomes. The core lesson: community policing must be embedded as a standard operating philosophy (beats, partnerships, problem-solving, accountability), not a time-limited project. Source: UCLA Luskin / newsroom.ucla.edu',
   },
   {
     tag: 'International Framework',
     title: 'United Nations Police: community-oriented policing in peace operations',
-    desc: 'UN policing guidelines stress that community policing must be an overall approach for the entire police service — not just for specialized "community liaison" officers. Emphasizes building public trust, forming partnerships, and reforming host-state police agencies around these principles. Source: police.un.org',
+    desc: 'UN policing guidelines stress that community policing must be an overall approach for the entire police service, not just for specialized "community liaison" officers. Emphasizes building public trust, forming partnerships, and reforming host-state police agencies around these principles. Source: police.un.org',
   },
 ];
 
-// ── State ────────────────────────────────────────────────────────────────────
+// State
 
 let state = {};
-const TOTAL = SECTIONS.reduce((n, s) => n + s.items.length, 0);
+let customItems = {};
+const BUILT_IN_TOTAL = SECTIONS.reduce((n, s) => n + s.items.length, 0);
 
 function loadState() {
   try {
     const saved = localStorage.getItem('cp_v1_responses');
     if (saved) state = JSON.parse(saved);
   } catch (_) {}
-  document.getElementById('f-name').value  = localStorage.getItem('cp_v1_name')  || '';
-  document.getElementById('f-dept').value  = localStorage.getItem('cp_v1_dept')  || '';
-  document.getElementById('f-date').value  = localStorage.getItem('cp_v1_date')  || '';
+  try {
+    const saved = localStorage.getItem('cp_v1_custom');
+    if (saved) customItems = JSON.parse(saved);
+  } catch (_) {}
+  document.getElementById('f-name').value = localStorage.getItem('cp_v1_name') || '';
+  document.getElementById('f-date').value = localStorage.getItem('cp_v1_date') || '';
 }
 
 function persistState() {
   localStorage.setItem('cp_v1_responses', JSON.stringify(state));
+  flashGlobalSave();
+}
+
+function persistCustomItems() {
+  localStorage.setItem('cp_v1_custom', JSON.stringify(customItems));
+  flashGlobalSave();
+}
+
+function persistOfficer() {
+  localStorage.setItem('cp_v1_name', document.getElementById('f-name').value);
+  localStorage.setItem('cp_v1_date', document.getElementById('f-date').value);
+}
+
+function flashGlobalSave() {
   const pill = document.getElementById('save-pill');
   pill.classList.add('show');
   clearTimeout(pill._t);
   pill._t = setTimeout(() => pill.classList.remove('show'), 1600);
 }
 
-function persistOfficer() {
-  localStorage.setItem('cp_v1_name', document.getElementById('f-name').value);
-  localStorage.setItem('cp_v1_dept', document.getElementById('f-dept').value);
-  localStorage.setItem('cp_v1_date', document.getElementById('f-date').value);
+// Progress
+
+function getTotalCount() {
+  let customTotal = 0;
+  Object.values(customItems).forEach(arr => customTotal += arr.length);
+  return BUILT_IN_TOTAL + customTotal;
 }
 
-// ── UI ───────────────────────────────────────────────────────────────────────
+function getAnsweredCount() {
+  const builtIn = Object.values(state).filter(v => v.r !== null).length;
+  let custom = 0;
+  Object.values(customItems).forEach(arr => arr.forEach(i => { if (i.r !== null) custom++; }));
+  return builtIn + custom;
+}
 
 function updateProgress() {
-  const answered = Object.values(state).filter(v => v.r !== null).length;
+  const total = getTotalCount();
+  const answered = getAnsweredCount();
   document.getElementById('p-count').textContent = answered;
-  document.getElementById('p-fill').style.width = (answered / TOTAL * 100) + '%';
+  document.getElementById('p-total').textContent = total;
+  document.getElementById('p-fill').style.width = total > 0 ? (answered / total * 100) + '%' : '0%';
 }
+
+// Built-in item interactions
 
 function setResponse(id, val) {
   if (!state[id]) state[id] = { r: null, n: '' };
@@ -739,15 +909,94 @@ function setNote(id, val) {
   if (!state[id]) state[id] = { r: null, n: '' };
   state[id].n = val;
   persistState();
+  scheduleNoteSaved(id);
 }
+
+// Custom item interactions
+
+function addCustomItem(sectionId) {
+  if (!customItems[sectionId]) customItems[sectionId] = [];
+  const id = 'x_' + sectionId + '_' + Date.now();
+  const item = { id, title: '', r: null, n: '' };
+  customItems[sectionId].push(item);
+  persistCustomItems();
+  appendCustomCard(sectionId, item, true);
+  updateProgress();
+}
+
+function deleteCustomItem(sectionId, itemId) {
+  if (!confirm('Remove this practice?')) return;
+  customItems[sectionId] = (customItems[sectionId] || []).filter(i => i.id !== itemId);
+  persistCustomItems();
+  document.getElementById('c-' + itemId)?.remove();
+  updateProgress();
+}
+
+function setCustomTitle(sectionId, itemId, val) {
+  const item = (customItems[sectionId] || []).find(i => i.id === itemId);
+  if (item) { item.title = val; persistCustomItems(); }
+}
+
+function setCustomResponse(sectionId, itemId, val) {
+  const item = (customItems[sectionId] || []).find(i => i.id === itemId);
+  if (!item) return;
+  item.r = item.r === val ? null : val;
+  persistCustomItems();
+
+  const card = document.getElementById('c-' + itemId);
+  if (card) card.className = 'item-card' + (item.r === 'yes' ? ' is-yes' : item.r === 'no' ? ' is-no' : '');
+  document.getElementById('y-' + itemId)?.classList.toggle('active', item.r === 'yes');
+  document.getElementById('n-' + itemId)?.classList.toggle('active', item.r === 'no');
+
+  updateProgress();
+}
+
+function setCustomNote(sectionId, itemId, val) {
+  const item = (customItems[sectionId] || []).find(i => i.id === itemId);
+  if (item) { item.n = val; persistCustomItems(); }
+  scheduleNoteSaved(itemId);
+}
+
+// Note saved indicator
+
+function scheduleNoteSaved(id) {
+  clearTimeout(window['_nt_' + id]);
+  window['_nt_' + id] = setTimeout(() => showNoteSaved(id), 600);
+}
+
+function showNoteSaved(id) {
+  const el = document.getElementById('ns-' + id);
+  if (!el) return;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// Helpers
 
 function autoGrow(el) {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
 }
 
+function escHtml(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function notesWrapHtml(id, val, isCustom, sectionId) {
+  const onInput = isCustom
+    ? `setCustomNote('${sectionId}','${id}',this.value);autoGrow(this)`
+    : `setNote('${id}',this.value);autoGrow(this)`;
+  return `
+    <div class="notes-wrap">
+      <textarea class="item-notes" id="ta-${id}" placeholder="Notes..." oninput="${onInput}">${escHtml(val)}</textarea>
+      <span class="note-saved" id="ns-${id}">&#10003; Saved</span>
+    </div>`;
+}
+
+// Render
+
 function render() {
-  document.getElementById('p-total').textContent = TOTAL;
   const container = document.getElementById('checklist');
 
   SECTIONS.forEach(section => {
@@ -759,16 +1008,14 @@ function render() {
     header.innerHTML = `
       <div class="section-pip" style="background:${section.color}"></div>
       <h2>${section.label}</h2>
-      <span class="section-meta">${section.items.length} practices</span>
     `;
     wrap.appendChild(header);
 
+    // Built-in items
     section.items.forEach(item => {
       const s = state[item.id] || { r: null, n: '' };
-      const cardClass = 'item-card' + (s.r === 'yes' ? ' is-yes' : s.r === 'no' ? ' is-no' : '');
-
       const card = document.createElement('div');
-      card.className = cardClass;
+      card.className = 'item-card' + (s.r === 'yes' ? ' is-yes' : s.r === 'no' ? ' is-no' : '');
       card.id = 'c-' + item.id;
       card.innerHTML = `
         <div class="item-title">${item.title}</div>
@@ -778,17 +1025,60 @@ function render() {
             <button class="btn-yes${s.r === 'yes' ? ' active' : ''}" id="y-${item.id}" onclick="setResponse('${item.id}','yes')">Yes</button>
             <button class="btn-no${s.r === 'no' ? ' active' : ''}"  id="n-${item.id}" onclick="setResponse('${item.id}','no')">No</button>
           </div>
-          <textarea class="item-notes" id="ta-${item.id}" placeholder="Notes…" oninput="setNote('${item.id}',this.value);autoGrow(this)">${s.n || ''}</textarea>
-        </div>
-      `;
+          ${notesWrapHtml(item.id, s.n, false, null)}
+        </div>`;
       wrap.appendChild(card);
     });
+
+    // Custom items for this section (already in state)
+    (customItems[section.id] || []).forEach(item => {
+      appendCustomCard(section.id, item, false, wrap);
+    });
+
+    // Add practice button
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-practice-btn';
+    addBtn.id = 'add-btn-' + section.id;
+    addBtn.onclick = () => addCustomItem(section.id);
+    addBtn.innerHTML = '+ Add a practice';
+    wrap.appendChild(addBtn);
 
     container.appendChild(wrap);
   });
 
-  // restore textarea heights
-  document.querySelectorAll('.item-notes').forEach(ta => autoGrow(ta));
+  // Restore textarea heights after render
+  setTimeout(() => document.querySelectorAll('.item-notes').forEach(ta => autoGrow(ta)), 0);
+}
+
+function appendCustomCard(sectionId, item, focusTitle, parentWrap) {
+  const card = document.createElement('div');
+  card.className = 'item-card' + (item.r === 'yes' ? ' is-yes' : item.r === 'no' ? ' is-no' : '');
+  card.id = 'c-' + item.id;
+  card.innerHTML = `
+    <div class="custom-item-header">
+      <input class="custom-title-input" type="text" placeholder="Practice name..." value="${escHtml(item.title)}"
+        oninput="setCustomTitle('${sectionId}','${item.id}',this.value)">
+      <button class="custom-delete-btn" onclick="deleteCustomItem('${sectionId}','${item.id}')" title="Remove">&times;</button>
+    </div>
+    <div class="item-footer">
+      <div class="toggle-group">
+        <button class="btn-yes${item.r === 'yes' ? ' active' : ''}" id="y-${item.id}" onclick="setCustomResponse('${sectionId}','${item.id}','yes')">Yes</button>
+        <button class="btn-no${item.r === 'no' ? ' active' : ''}"  id="n-${item.id}" onclick="setCustomResponse('${sectionId}','${item.id}','no')">No</button>
+      </div>
+      ${notesWrapHtml(item.id, item.n, true, sectionId)}
+    </div>`;
+
+  const addBtn = parentWrap
+    ? parentWrap.querySelector('.add-practice-btn')
+    : document.getElementById('add-btn-' + sectionId);
+
+  if (addBtn) {
+    addBtn.parentElement.insertBefore(card, addBtn);
+  }
+
+  if (focusTitle) {
+    setTimeout(() => card.querySelector('.custom-title-input')?.focus(), 50);
+  }
 }
 
 function renderAddendum() {
@@ -799,81 +1089,59 @@ function renderAddendum() {
     el.innerHTML = `
       <div class="ref-eyebrow">${ref.tag}</div>
       <div class="ref-title">${ref.title}</div>
-      <div class="ref-desc">${ref.desc}</div>
-    `;
+      <div class="ref-desc">${ref.desc}</div>`;
     body.appendChild(el);
   });
 }
 
 function toggleAddendum() {
-  const btn  = document.getElementById('add-toggle');
-  const body = document.getElementById('add-body');
-  btn.classList.toggle('open');
-  body.classList.toggle('open');
+  document.getElementById('add-toggle').classList.toggle('open');
+  document.getElementById('add-body').classList.toggle('open');
 }
 
+// Reset
+
 function resetAll() {
-  if (!confirm('Clear all responses and notes? This cannot be undone.')) return;
+  if (!confirm('Clear all responses, notes, and custom practices? This cannot be undone.')) return;
   state = {};
+  customItems = {};
   localStorage.removeItem('cp_v1_responses');
-  document.querySelectorAll('.btn-yes, .btn-no').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.item-card').forEach(c => c.className = 'item-card');
-  document.querySelectorAll('.item-notes').forEach(ta => { ta.value = ''; autoGrow(ta); });
+  localStorage.removeItem('cp_v1_custom');
+  document.getElementById('checklist').innerHTML = '';
+  render();
+  renderAddendum();
   updateProgress();
 }
 
-function copySummary() {
-  const name = document.getElementById('f-name').value || '—';
-  const dept = document.getElementById('f-dept').value || '—';
-  const date = document.getElementById('f-date').value || new Date().toLocaleDateString();
+// Save / Print modal
 
-  let yesN = 0, noN = 0, naN = 0;
-  const lines = [
-    'COMMUNITY POLICING PRACTICE ASSESSMENT',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    `Officer:    ${name}`,
-    `Department: ${dept}`,
-    `Date:       ${date}`,
-    '',
-  ];
-
-  SECTIONS.forEach(s => {
-    lines.push(`── ${s.label.toUpperCase()} ──`);
-    s.items.forEach(item => {
-      const st = state[item.id] || { r: null, n: '' };
-      const mark = st.r === 'yes' ? '✅ YES' : st.r === 'no' ? '❌ NO ' : '⬜  —';
-      if (st.r === 'yes') yesN++;
-      else if (st.r === 'no') noN++;
-      else naN++;
-      lines.push(`${mark}  ${item.title}`);
-      if (st.n) lines.push(`       Notes: ${st.n}`);
-    });
-    lines.push('');
-  });
-
-  const pct = Math.round(yesN / TOTAL * 100);
-  lines.push('── SUMMARY ──');
-  lines.push(`Currently doing:     ${yesN} of ${TOTAL} (${pct}%)`);
-  lines.push(`Not currently doing: ${noN}`);
-  lines.push(`Not answered:        ${naN}`);
-
-  navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy summary', 2200);
-  }).catch(() => alert('Clipboard access denied — try the Print button instead.'));
+function openSaveDialog() {
+  document.getElementById('print-modal').classList.add('open');
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+function closePrintModal() {
+  document.getElementById('print-modal').classList.remove('open');
+}
+
+function doPrint() {
+  closePrintModal();
+  setTimeout(() => window.print(), 120);
+}
+
+// Init
 
 loadState();
 render();
 renderAddendum();
 updateProgress();
 
-['f-name', 'f-dept', 'f-date'].forEach(id =>
+['f-name', 'f-date'].forEach(id =>
   document.getElementById(id).addEventListener('input', persistOfficer)
 );
+
+document.getElementById('print-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePrintModal();
+});
 </script>
 </body>
 </html>
